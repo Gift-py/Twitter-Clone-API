@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 // TWEETS CRUD
 //create tweet
 router.post('/', async(req, res) => {
+
     const { content, image } = req.body;
     // @ts-ignore
     const user = req.user;

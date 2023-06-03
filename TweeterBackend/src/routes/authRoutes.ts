@@ -5,7 +5,7 @@ import { sendEmailToken } from "../services/emailService";
 
 const EMAIL_TOKEN_EXPIRATION_MINUTES = 10;
 const AUTHENTICATION_EXPIRATION_HOURS = 120;
-const JWT_SECRET = process.env.JWT_SECRET || 'SUPER SECRET';
+const JWT_SECRET = 'SUPER SECRET';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -95,6 +95,7 @@ router.post('/authenticate', async(req, res) => {
         data: {
             type: "API",
             expiration,
+            
             user: {
                 connect: {
                     email,
@@ -110,7 +111,17 @@ router.post('/authenticate', async(req, res) => {
     });
 
     // generate the jwt token
+    console.log(apiToken.id)
     const authToken = generateAuthToken(apiToken.id);
+
+    const addJWT = await prisma.token.update({
+        where: {
+          id: apiToken.id,
+        },
+        data: {
+          emailToken: authToken,
+        },
+      });
 
     res.json({ authToken });
 
